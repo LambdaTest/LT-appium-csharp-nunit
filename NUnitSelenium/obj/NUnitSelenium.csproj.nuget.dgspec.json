@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/garvits/Downloads/Nunit_App_Automation_Android-master/NUnitSelenium/NUnitSelenium.csproj": {}
+  },
+  "projects": {
+    "/Users/garvits/Downloads/Nunit_App_Automation_Android-master/NUnitSelenium/NUnitSelenium.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/garvits/Downloads/Nunit_App_Automation_Android-master/NUnitSelenium/NUnitSelenium.csproj",
+        "projectName": "ParallelSelenium",
+        "projectPath": "/Users/garvits/Downloads/Nunit_App_Automation_Android-master/NUnitSelenium/NUnitSelenium.csproj",
+        "packagesPath": "/Users/garvits/.nuget/packages/",
+        "outputPath": "/Users/garvits/Downloads/Nunit_App_Automation_Android-master/NUnitSelenium/obj/",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "configFilePaths": [
+          "/Users/garvits/.config/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "Appium.WebDriver": {
+              "target": "Package",
+              "version": "[4.1.1, )"
+            },
+            "DotNetSeleniumExtras.WaitHelpers": {
+              "target": "Package",
+              "version": "[3.11.0, )"
+            },
+            "NUnit": {
+              "target": "Package",
+              "version": "[3.13.2, )"
+            },
+            "NUnit3TestAdapter": {
+              "target": "Package",
+              "version": "[3.8.0, )"
+            },
+            "Selenium.RC": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
+            "Selenium.Support": {
+              "target": "Package",
+              "version": "[3.5.2, )"
+            },
+            "Selenium.WebDriver": {
+              "target": "Package",
+              "version": "[3.141.0, )"
+            },
+            "Selenium.WebDriverBackedSelenium": {
+              "target": "Package",
+              "version": "[3.5.2, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

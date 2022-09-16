@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "dgSpecHash": "fUwZjpnS2utq9zOhnpoXo9F98M+CBnauM44orZmEp9CltTFBcVBLFwLtnLnT2iNwB70hAPfBacyjQeBHS0Cndw==",
+  "success": true,
+  "projectFilePath": "/Users/garvits/Downloads/Nunit_App_Automation_Android-master/NUnitSelenium/NUnitSelenium.csproj",
+  "expectedPackageFiles": [
+    "/Users/garvits/.nuget/packages/appium.webdriver/4.1.1/appium.webdriver.4.1.1.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/castle.core/4.3.1/castle.core.4.3.1.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/dotnetseleniumextras.pageobjects/3.11.0/dotnetseleniumextras.pageobjects.3.11.0.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/dotnetseleniumextras.waithelpers/3.11.0/dotnetseleniumextras.waithelpers.3.11.0.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/newtonsoft.json/12.0.1/newtonsoft.json.12.0.1.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/nunit/3.13.2/nunit.3.13.2.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/nunit3testadapter/3.8.0/nunit3testadapter.3.8.0.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/selenium.rc/3.1.0/selenium.rc.3.1.0.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/selenium.support/3.5.2/selenium.support.3.5.2.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/selenium.webdriver/3.141.0/selenium.webdriver.3.141.0.nupkg.sha512",
+    "/Users/garvits/.nuget/packages/selenium.webdriverbackedselenium/3.5.2/selenium.webdriverbackedselenium.3.5.2.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1605",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Detected package downgrade: Selenium.Support from 3.141.0 to 3.5.2. Reference the package directly from the project to select a different version. \n ParallelSelenium -> Appium.WebDriver 4.1.1 -> Selenium.Support (>= 3.141.0) \n ParallelSelenium -> Selenium.Support (>= 3.5.2)",
+      "libraryId": "Selenium.Support",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.8",
+        ".NETFramework,Version=v4.8/win",
+        ".NETFramework,Version=v4.8/win-x64",
+        ".NETFramework,Version=v4.8/win-x86"
+      ]
+    }
+  ]
+}
