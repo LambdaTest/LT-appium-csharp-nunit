@@ -1,96 +1,65 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CD30BB8B-92E2-4BF3-9A53-789B8602FA09}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ParallelSelenium</RootNamespace>
-    <AssemblyName>ParallelSelenium</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
-    <OutputPath>bin\Test\</OutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="NUnitSeleniumTests.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Appium.WebDriver">
-      <Version>4.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers">
-      <Version>3.11.0</Version>
-    </PackageReference>
-    <PackageReference Include="NUnit">
-      <Version>3.13.2</Version>
-    </PackageReference>
-    <PackageReference Include="NUnit3TestAdapter">
-      <Version>3.8.0</Version>
-    </PackageReference>
-    <PackageReference Include="Selenium.RC">
-      <Version>3.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="Selenium.Support">
-      <Version>3.5.2</Version>
-    </PackageReference>
-    <PackageReference Include="Selenium.WebDriver">
-      <Version>3.141.0</Version>
-    </PackageReference>
-    <PackageReference Include="Selenium.WebDriverBackedSelenium">
-      <Version>3.5.2</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    NUnitAppium.csproj - SDK-style project for .NET 10
+    Migrated from legacy .csproj (net48) to modern SDK format (net10.0).
+
+    .NET 10 allows us to use the LATEST versions of all packages:
+      - Appium.WebDriver 5.x  (requires .NET 6+, now fully supported)
+      - Selenium 4.x latest
+      - NUnit 4.x
   -->
+
+  <PropertyGroup>
+    <!-- Target .NET 10 (latest) -->
+    <TargetFramework>net10.0</TargetFramework>
+
+    <!-- This is a test project - no executable output needed -->
+    <OutputType>Library</OutputType>
+
+    <!-- Needed so NUnit test runner can discover tests -->
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+
+    <!-- Assembly name -->
+    <AssemblyName>NUnitAppium</AssemblyName>
+    <RootNamespace>NUnitAppium</RootNamespace>
+
+    <!-- Suppress nullable warnings - not using nullable reference types here -->
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
+    NuGet Packages - all latest stable versions (net10.0 compatible):
+
+      Appium.WebDriver   5.0.0-rc.5  - W3C protocol, requires .NET 6+ (now OK on net10)
+      Selenium.WebDriver 4.18.1      - Core WebDriver protocol
+      Selenium.Support   4.18.1      - WebDriverWait, SelectElement etc.
+      NUnit              4.1.0       - Latest NUnit 4 (major version upgrade)
+      NUnit3TestAdapter  4.5.0       - VS Test Explorer + dotnet test adapter
+      Microsoft.NET
+        .Test.Sdk        17.9.0      - Required by NUnit on SDK-style projects
+  -->
+  <ItemGroup>
+    <!-- Appium W3C driver - latest, works on .NET 6+ / .NET 10 -->
+    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.5" />
+
+    <!-- Selenium core -->
+    <PackageReference Include="Selenium.WebDriver" Version="4.18.1" />
+    <PackageReference Include="Selenium.Support" Version="4.18.1" />
+
+    <!-- NUnit 4 test framework -->
+    <PackageReference Include="NUnit" Version="4.1.0" />
+
+    <!-- NUnit adapter for dotnet test / VS Test Explorer -->
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+
+    <!-- Required test SDK for SDK-style NUnit projects -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+
+    <!-- ExpectedConditions helpers for WebDriverWait -->
+    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
+  </ItemGroup>
+
 </Project>

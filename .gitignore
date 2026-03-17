@@ -1,0 +1,42 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .gitignore for C# NUnit Appium (.NET 10)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Build output folders
+bin/
+obj/
+
+# NuGet packages (restored automatically via dotnet restore)
+packages/
+*.nupkg
+nuget.exe
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider IDE
+.idea/
+
+# VS Code
+.vscode/
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+
+# Logs
+*.log
+lt.log
+
+# OS files
+.DS_Store
+desktop.ini
+Thumbs.db
+
+# Temp downloaded files
+nuget.exe
