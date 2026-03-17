@@ -1,4 +1,4 @@
-# C# Nunit With Appium 
+# C# NUnit With Appium
 
 
 <p align="center">
@@ -32,17 +32,19 @@
 
 ## Pre-requisites
 
-Before you can start performing App automation testing with Appium, you have to set up Visual Studio:
+Before you can start performing App automation testing with Appium, you need to set up the **.NET 10 SDK**. Optionally you can also use Visual Studio:
 
 <p align="center">
 <img height="500" src="https://user-images.githubusercontent.com/109070745/180055052-c0761088-eaa1-48f3-abac-521ca8c3458b.png">
 </p>
 
+- Install **.NET 10 SDK** from: https://dotnet.microsoft.com/download/dotnet/10.0
+
 - Clone/Download the Github Repository.
 
-- Open the NUnitAppium project using the file with a .sln extension.
+- Open the `NUnitAppium.sln` solution file in Visual Studio (optional — tests can also be run directly from the command line using `run-tests.bat` on Windows or `run-tests.sh` on macOS/Linux).
 
-- Make sure you install the framework NUnit3.0. Along with this install latest NuGet Plugin for Visual Studio and add the NuGet CLI executable installed in your path.
+> **Note:** Visual Studio is **not required**. The `.NET 10 SDK` alone is enough to build and run tests from the command line.
 
 ### Setting Up Your Authentication
 
@@ -52,15 +54,15 @@ Set LambdaTest `Username` and `Access Key` in environment variables.
 
 **For Linux/macOS:**
 
-```js
-export LT_USERNAME=YOUR_LAMBDATEST_USERNAME \
+```bash
+export LT_USERNAME=YOUR_LAMBDATEST_USERNAME
 export LT_ACCESS_KEY=YOUR_LAMBDATEST_ACCESS_KEY
 ```
-  
+
 **For Windows:**
 
-```js
-set LT_USERNAME=YOUR_LAMBDATEST_USERNAME `
+```cmd
+set LT_USERNAME=YOUR_LAMBDATEST_USERNAME
 set LT_ACCESS_KEY=YOUR_LAMBDATEST_ACCESS_KEY
 ```
 
@@ -72,24 +74,26 @@ Upload your **_iOS_** application (.ipa file) or **_android_** application (.apk
 
 **For Linux/macOS:**
 
-```js
+```bash
 curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" \
 --location --request POST 'https://manual-api.lambdatest.com/app/upload/realDevice' \
 --form 'name="Android_App"' \
---form 'appFile=@"/Users/macuser/Downloads/proverbial_android.apk"' 
+--form 'appFile=@"/Users/macuser/Downloads/proverbial_android.apk"'
 ```
 
 **For Windows:**
 
-```js
-curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" -X POST "https://manual-api.lambdatest.com/app/upload/realDevice" -F "appFile=@"/Users/macuser/Downloads/proverbial_android.apk""
+```cmd
+curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" ^
+  -X POST "https://manual-api.lambdatest.com/app/upload/realDevice" ^
+  -F "appFile=@C:\Users\Downloads\proverbial_android.apk"
 ```
 
 **Using App URL:**
 
 **For Linux/macOS:**
 
-```js
+```bash
 curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" \
 --location --request POST 'https://manual-api.lambdatest.com/app/upload/realDevice' \
 --form 'name="Android_App"' \
@@ -98,14 +102,16 @@ curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" \
 
 **For Windows:**
 
-```js
-curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" -X POST "https://manual-api.lambdatest.com/app/upload/realDevice" -d "{"url":"https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_android.apk","name":"sample.apk"}"
+```cmd
+curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" ^
+  -X POST "https://manual-api.lambdatest.com/app/upload/realDevice" ^
+  -d "{\"url\":\"https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_android.apk\",\"name\":\"sample.apk\"}"
 ```
 
 **Tip:**
 
 - If you do not have any **.apk** or **.ipa** file, you can run your sample tests on LambdaTest by using our sample :link: [Android app](https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_android.apk) or sample :link: [iOS app](https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_ios.ipa).
-- Response of above cURL will be a **JSON** object containing the `App URL` of the format - <lt://APP123456789123456789> and will be used in the next step.
+- Response of above cURL will be a **JSON** object containing the `App URL` of the format - `lt://APP123456789123456789` and will be used in the next step.
 
 ## Run Your First Test
 
@@ -113,37 +119,87 @@ curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" -X POST "https://m
 
 ### Configuring Your Test Capabilities
 
-You can update your custom capabilities in test scripts. In this sample project, we are passing platform name, platform version, device name and app url (generated earlier) along with other capabilities like build name and test name via capabilities object. The capabilities object in the sample code are defined as:
+Open `NUnitAppium/NUnitAppiumTests.cs` and update the `[TestFixture]` lines at the top to select your target device and app URL:
 
-```js
- AppiumOptions capabilities = new AppiumOptions();
-            capabilities.AddAdditionalCapability("user", "LT_USERNAME");   //Add LambdaTest username here
-            capabilities.AddAdditionalCapability("accessKey", "LT_ACCESS_KEY");   //Add LambdaTest accessKey here
-            capabilities.AddAdditionalCapability("app",app);
-            capabilities.AddAdditionalCapability("deviceName", deviceName);
-            capabilities.AddAdditionalCapability("platformVersion", platformVersion);
-            capabilities.AddAdditionalCapability("platformName", platformName);
-            capabilities.AddAdditionalCapability("build", "Csharp NUnit");
-            capabilities.AddAdditionalCapability("name", "NUnit Test");
-            capabilities.AddAdditionalCapability("isRealMobile", true);
+```csharp
+// Each line = one device. Comment/uncomment to control what runs.
+// To run ONLY Android : keep Android line, comment out iOS line
+// To run ONLY iOS     : keep iOS line, comment out Android line
+// To run BOTH         : keep both lines (they run in parallel)
+
+[TestFixture("Galaxy S24", "14", "Android", "lt://APP_URL")]  // Android
+[TestFixture("iPhone 15",  "17", "iOS",     "lt://APP_URL")]  // iOS
+```
+
+The capabilities are configured using the modern **W3C AppiumOptions** format. `deviceName`, `platformVersion` and `app` are passed inside `lt:options` to guarantee LambdaTest always allocates the exact requested device:
+
+```csharp
+var options = new AppiumOptions
+{
+    PlatformName   = platformName,                          // "Android" or "iOS"
+    AutomationName = isIOS ? "XCUITest" : "UiAutomator2"   // automation engine
+};
+
+options.AddAdditionalAppiumOption("lt:options", new Dictionary<string, object>
+{
+    { "username",        "LT_USERNAME"    },   // LambdaTest username (from env variable)
+    { "accessKey",       "LT_ACCESS_KEY"  },   // LambdaTest access key (from env variable)
+    { "deviceName",      "Galaxy S24"     },   // exact device — inside lt:options for guaranteed allocation
+    { "platformVersion", "14"             },   // OS version
+    { "app",             "lt://APP_URL"   },   // app URL from upload step
+    { "build",           "CSharp NUnit"   },
+    { "name",            "NUnit Test"     },
+    { "isRealMobile",    true             },
+    { "w3c",             true             }
+});
+
+// Appium-level capabilities
+options.AddAdditionalAppiumOption("autoGrantPermissions", true);  // Android: auto grant runtime permissions
+options.AddAdditionalAppiumOption("autoAcceptAlerts",     true);  // iOS: auto accept system alert popups
 ```
 
 **Info Note:**
 
-- You must add the generated **APP_URL** to the `"app"` capability in the config file.
-- You can generate capabilities for your test requirements with the help of our inbuilt **[Capabilities Generator tool](https://www.lambdatest.com/capabilities-generator/)**. A more Detailed Capability Guide is available [here](https://www.lambdatest.com/support/docs/desired-capabilities-in-appium/).
+- You must add the generated **APP_URL** to the `"app"` key inside `lt:options`.
+- `deviceName`, `platformVersion` and `app` are passed inside `lt:options` — **not** at the Appium level. Passing `deviceName` only at the Appium level can result in a random device being allocated instead of the requested one.
+- `autoGrantPermissions` automatically handles runtime permission dialogs on Android (camera, location etc.) so you do not need to handle them in your test steps.
+- `autoAcceptAlerts` automatically taps Allow on iOS system alert popups (notifications, location etc.).
+- You can generate capabilities for your test requirements with the help of our inbuilt **[Capabilities Generator tool](https://www.lambdatest.com/capabilities-generator/)**. A more detailed Capability Guide is available [here](https://www.lambdatest.com/support/docs/desired-capabilities-in-appium/).
 
 ## Executing The Tests
 
-Run the following command in the directory where your project has been saved to execute your build and run the tests parallely.
+### Option 1 — One-Click Script (Recommended)
 
-nmake all
+**Windows** — Open Command Prompt and run:
 
-or
+```cmd
+set LT_USERNAME=YOUR_LAMBDATEST_USERNAME
+set LT_ACCESS_KEY=YOUR_LAMBDATEST_ACCESS_KEY
+run-tests.bat
+```
 
-Go to **Build** menu in Visual Studio Code menu bar and click on **Build Solution**. After the solution is built navigate built navigate to **Test menu** and click on **Test All** to execute the tests.
+**macOS / Linux** — Open Terminal and run:
 
-**Info:** Your test results would be displayed on the test console (or command-line interface if you are using terminal/cmd) and on the :link: [LambdaTest App Automation Dashboard](https://appautomation.lambdatest.com/build).
+```bash
+export LT_USERNAME=YOUR_LAMBDATEST_USERNAME
+export LT_ACCESS_KEY=YOUR_LAMBDATEST_ACCESS_KEY
+bash run-tests.sh
+```
+
+The script automatically restores NuGet packages, builds the solution in Release mode, and runs the tests.
+
+### Option 2 — dotnet CLI
+
+```bash
+dotnet build NUnitAppium.sln --configuration Release
+dotnet test NUnitAppium.sln --configuration Release --no-build
+```
+
+### Option 3 — Visual Studio
+
+Go to **Build** menu and click **Build Solution**. After the solution is built, navigate to the **Test** menu and click **Run All Tests**.
+
+**Info:** Your test results will be displayed on the test console (or command-line interface if you are using terminal/cmd) and on the :link: [LambdaTest App Automation Dashboard](https://appautomation.lambdatest.com/build).
 
 ## Additional Links
 
@@ -185,7 +241,7 @@ To stay updated with the latest features and product add-ons, visit [Changelog](
 * Geolocation testing of web and mobile apps across 53+ countries.
 * LT Browser - for responsive testing across 50+ pre-installed mobile, tablets, desktop, and laptop viewports
     
-[<img height="53" width="200" src="https://user-images.githubusercontent.com/70570645/171866795-52c11b49-0728-4229-b073-4b704209ddde.png">](https://accounts.lambdatest.com/register)
+[<img height="53" width="200" src="https://user-images.githubusercontent.com/70570645/171866795-52c11b49-0728-4209ddde.png">](https://accounts.lambdatest.com/register)
 
       
 ## We are here to help you :headphones:
