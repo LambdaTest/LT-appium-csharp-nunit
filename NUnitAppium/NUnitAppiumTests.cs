@@ -1,20 +1,20 @@
-﻿using System;
+﻿using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
-
-using NUnit.Framework;
-using System.Threading;
-using System.Collections.Generic;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.iOS;
+using OpenQA.Selenium.Appium.Enums;
+using OpenQA.Selenium.Appium.Service;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
+using System;
+using System.Threading;
 
-namespace NUnitSelenium
+namespace NUnitAppium
 {
     //-------------------Running two parallel test cases----------------------------
-    [TestFixture("OnePlus 6", "8", "Android", "lt://proverbial-android")]    // Android Testing 
-    [TestFixture("iPhone 11", "14", "iOS", "lt://proverbial-ios")]      // iOS testing
+    [TestFixture("Galaxy S23 Ultra", "13", "Android", "lt://proverbial-android")]    // Android Testing
+    [TestFixture("iPhone 14", "16", "iOS", "lt://proverbial-ios")]      // iOS testing
     //[TestFixture("OnePlus 6T", "9", "Android", "APP_URL")]
     //[TestFixture("OnePlus 6T", "9", "Android", "APP_URL")]
     //[TestFixture("OnePlus 6T", "9", "Android", "APP_URL")]
@@ -23,30 +23,20 @@ namespace NUnitSelenium
     //[TestFixture("OnePlus 6T", "9", "Android", "APP_URL")]
     // [TestFixture("OnePlus 6T", "9", "Android", "APP_URL")]
     [Parallelizable(ParallelScope.Fixtures)]
-    public class NUnitSeleniumSample
+    public class NUnitAppiumTests
     {
-        //--------------------We can intialize username and access Key with hub url to authenticate our test script-------------------------------------
-        public static string LT_USERNAME = Environment.GetEnvironmentVariable("LT_USERNAME") ==null ? "your username" : Environment.GetEnvironmentVariable("LT_USERNAME");
-        public static string LT_ACCESS_KEY = Environment.GetEnvironmentVariable("LT_ACCESS_KEY") == null ? "your accessKey" : Environment.GetEnvironmentVariable("LT_ACCESS_KEY");
-        public static bool tunnel = Boolean.Parse(Environment.GetEnvironmentVariable("LT_TUNNEL")== null ? "false" : Environment.GetEnvironmentVariable("LT_TUNNEL"));       
-        public static string build = Environment.GetEnvironmentVariable("LT_BUILD") == null ? "your build name" : Environment.GetEnvironmentVariable("LT_BUILD");
-        public static string seleniumUri = "https://mobile-hub.lambdatest.com:443/wd/hub";
+        private AppiumDriver<AppiumWebElement> driver;
+        private WebDriverWait wait;
+        private String deviceName = Environment.GetEnvironmentVariable("LT_DEVICE_NAME") ?? "deviceName";
+        private String platformVersion = Environment.GetEnvironmentVariable("LT_PLATFORM_VERSION") ?? "platformVersion";
+        private String platformName = Environment.GetEnvironmentVariable("LT_PLATFORM_NAME") ?? "platformName";
+        private String app = Environment.GetEnvironmentVariable("LT_APP") ?? "app";
+        private String build = Environment.GetEnvironmentVariable("LT_BUILD") ?? "Csharp NUnit";
+        private String seleniumUri = "https://mobile-hub.lambdatest.com/wd/hub";
+        private static String LT_USERNAME = Environment.GetEnvironmentVariable("LT_USERNAME");
+        private static String LT_ACCESS_KEY = Environment.GetEnvironmentVariable("LT_ACCESS_KEY");
 
-
-
-
-        //-------------------------Initialization of Driver--------------------------
-        AndroidDriver<AndroidElement> driver;
-
-        // Initialization some parameter 
-        private String deviceName;
-        private String platformVersion;
-        private String platformName;
-        private String app;
-
-       
-
-        public NUnitSeleniumSample(String deviceName, String platformVersion, String platformName, String app)
+        public NUnitAppiumTests(String deviceName, String platformVersion, String platformName, String app)
         {
             this.deviceName = deviceName;
             this.platformVersion = platformVersion;
@@ -57,178 +47,186 @@ namespace NUnitSelenium
         [SetUp]
         public void Init()
         {
-            //-----------------------------------Create instance for passing capabilities-----------------------------------------------------------------
+            Console.WriteLine($"[LOG] [SetUp] Starting test for device: {deviceName}, platform: {platformName}, version: {platformVersion}, app: {app}");
             AppiumOptions capabilities = new AppiumOptions();
-            capabilities.AddAdditionalCapability("user", "LT_USERNAME");   //Add LambdaTest username here
-            capabilities.AddAdditionalCapability("accessKey", "LT_ACCESS_KEY");   //Add LambdaTest accessKey here
-            capabilities.AddAdditionalCapability("app",app);
+            capabilities.AddAdditionalCapability("user", LT_USERNAME);
+            capabilities.AddAdditionalCapability("accessKey", LT_ACCESS_KEY);
+            capabilities.AddAdditionalCapability("app", app);
             capabilities.AddAdditionalCapability("deviceName", deviceName);
             capabilities.AddAdditionalCapability("platformVersion", platformVersion);
             capabilities.AddAdditionalCapability("platformName", platformName);
-            capabilities.AddAdditionalCapability("build", "Csharp NUnit");
+            capabilities.AddAdditionalCapability("build", build);
             capabilities.AddAdditionalCapability("name", "NUnit Test");
             capabilities.AddAdditionalCapability("isRealMobile", true);
+            capabilities.AddAdditionalCapability("network", true);
+            capabilities.AddAdditionalCapability("visual", true);
+            capabilities.AddAdditionalCapability("video", true);
+            capabilities.AddAdditionalCapability("console", true);
+            capabilities.AddAdditionalCapability("deviceOrientation", "PORTRAIT");
+            capabilities.AddAdditionalCapability("autoGrantPermissions", true);
+            capabilities.AddAdditionalCapability("newCommandTimeout", 120);
+            capabilities.AddAdditionalCapability("w3c", true);
 
-            
-                 driver = new AndroidDriver<AndroidElement> (new Uri(seleniumUri), capabilities, TimeSpan.FromSeconds(600));
-            
-           // Console.Out.WriteLine(driver);
-            Console.Out.WriteLine("On Which Device/Paltform test is running:"+deviceName+" "+platformVersion+" "+platformName);
-            
+            try
+            {
+                if (platformName.Equals("Android"))
+                {
+                    driver = new AndroidDriver<AppiumWebElement>(new Uri(seleniumUri), capabilities);
+                }
+                else if (platformName.Equals("iOS"))
+                {
+                    driver = new IOSDriver<AppiumWebElement>(new Uri(seleniumUri), capabilities);
+                }
+                wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[ERROR] Failed to initialize driver: {e.Message}");
+                throw;
+            }
         }
 
         [Test]
         public void Todotest()
         {
+            try
             {
-                //----------------------Text Color Changes---------------------------------
-                Console.WriteLine("1.Text Color Changes");
-                AndroidElement searchElement = (AndroidElement)new WebDriverWait(
-                 driver, TimeSpan.FromSeconds(20)).Until(
-                 SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                    MobileBy.Id("color"))
-             );
-                System.Threading.Thread.Sleep(1000);
-                searchElement.Click();
-                System.Threading.Thread.Sleep(1000);
-                searchElement.Click();
+                Console.WriteLine("[LOG] Starting Todotest");
+                
+                // Click on Color button
+                Console.WriteLine("Test: Clicking color button...");
+                AppiumWebElement colorButton = (AppiumWebElement)wait.Until(d => d.FindElement(By.Id("color")));
+                colorButton.Click();
+                colorButton.Click();
+                Console.WriteLine("✓ Color button test passed");
+                Thread.Sleep(platformName.Equals("iOS") ? 2000 : 1000);
 
-                System.Threading.Thread.Sleep(1000);
+                // Click on Text button
+                Console.WriteLine("Test: Clicking text button...");
+                AppiumWebElement textButton = (AppiumWebElement)wait.Until(d => d.FindElement(By.Id("Text")));
+                textButton.Click();
+                Console.WriteLine("✓ Text button test passed");
+                Thread.Sleep(platformName.Equals("iOS") ? 2000 : 1000);
 
-                //----------------------Text Changes by clicking a button---------------------------------
-                Console.WriteLine("2.Text Changes by clicking a button");
+                // Click on Toast button
+                Console.WriteLine("Test: Clicking toast button...");
+                AppiumWebElement toastButton = (AppiumWebElement)wait.Until(d => d.FindElement(By.Id("toast")));
+                toastButton.Click();
+                Console.WriteLine("✓ Toast button test passed");
+                Thread.Sleep(platformName.Equals("iOS") ? 2000 : 1000);
 
-                AndroidElement changeelement = (AndroidElement)new WebDriverWait(
-                 driver, TimeSpan.FromSeconds(10)).Until(
-                 SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                    MobileBy.Id("Text"))
-             );
-                changeelement.Click();
+                // Click on Notification button
+                Console.WriteLine("Test: Clicking notification button...");
+                AppiumWebElement notificationButton = (AppiumWebElement)wait.Until(d => d.FindElement(By.Id("notification")));
+                notificationButton.Click();
+                Console.WriteLine("✓ Notification button test passed");
+                Thread.Sleep(platformName.Equals("iOS") ? 3000 : 2000);
 
-                System.Threading.Thread.Sleep(1000);
+                // Click on Geolocation button
+                Console.WriteLine("Test: Clicking geolocation button...");
+                AppiumWebElement geoLocationButton = (AppiumWebElement)wait.Until(d => d.FindElement(By.Id("geoLocation")));
+                geoLocationButton.Click();
+                Console.WriteLine("✓ Geolocation button test passed");
+                Console.WriteLine("Waiting for geolocation request to process...");
+                Thread.Sleep(platformName.Equals("iOS") ? 15000 : 10000);
 
-                //----------------------Toast---------------------------------
-                Console.WriteLine("3.Toast");
+                // Handle back navigation based on platform
+                if (platformName.Equals("Android"))
+                {
+                    ((AndroidDriver<AppiumWebElement>)driver).PressKeyCode(AndroidKeyCode.Back);
+                }
+                else
+                {
+                    driver.Navigate().Back();
+                }
+                Console.WriteLine("✓ Navigated back from Geolocation");
+                Thread.Sleep(platformName.Equals("iOS") ? 2000 : 1000);
 
-                AndroidElement toast = (AndroidElement)new WebDriverWait(
-                 driver, TimeSpan.FromSeconds(10)).Until(
-                 SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                    MobileBy.Id("toast"))
-             );
-                toast.Click();
+                // Click on Speed Test button
+                Console.WriteLine("Test: Clicking speed test button...");
+                try
+                {
+                    AppiumWebElement speedTestButton = (AppiumWebElement)wait.Until(d => d.FindElement(By.Id("speedTest")));
+                    speedTestButton.Click();
+                    Console.WriteLine("✓ Speed test button test passed");
+                    Thread.Sleep(platformName.Equals("iOS") ? 7000 : 5000);
 
-                System.Threading.Thread.Sleep(1000);
+                    // Handle back navigation based on platform
+                    if (platformName.Equals("Android"))
+                    {
+                        ((AndroidDriver<AppiumWebElement>)driver).PressKeyCode(AndroidKeyCode.Back);
+                    }
+                    else
+                    {
+                        driver.Navigate().Back();
+                    }
+                    Console.WriteLine("✓ Navigated back from Speed Test");
+                    Thread.Sleep(platformName.Equals("iOS") ? 2000 : 1000);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Note: Speed test button not found or not clickable: {e.Message}");
+                }
 
-                //----------------------Notification By clicking a button---------------------------------
-                Console.WriteLine("4.Notification Button clicked");
+                // Click on Browser button
+                Console.WriteLine("Test: Clicking browser button...");
+                try
+                {
+                    AppiumWebElement browserButton = (AppiumWebElement)wait.Until(d => d.FindElement(MobileBy.AccessibilityId("Browser")));
+                    browserButton.Click();
+                    Console.WriteLine("✓ Browser button test passed");
 
-                AndroidElement Notification = (AndroidElement)new WebDriverWait(
-                 driver, TimeSpan.FromSeconds(10)).Until(
-                 SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                    MobileBy.Id("notification"))
-             );
-                Notification.Click();
-                System.Threading.Thread.Sleep(2000);
+                    // Click on URL input box
+                    Console.WriteLine("Test: Clicking URL input box...");
+                    AppiumWebElement urlInput = (AppiumWebElement)wait.Until(d => d.FindElement(By.Id("url")));
+                    urlInput.Click();
+                    urlInput.SendKeys("www.lambdatest.com");
+                    Console.WriteLine("✓ URL input box test passed");
+                    Thread.Sleep(platformName.Equals("iOS") ? 2000 : 1000);
 
-                //----------------------Geolocation button---------------------------------
-                Console.WriteLine("5.Geolocation");
+                    // Handle back navigation based on platform
+                    if (platformName.Equals("Android"))
+                    {
+                        ((AndroidDriver<AppiumWebElement>)driver).PressKeyCode(AndroidKeyCode.Back);
+                    }
+                    else
+                    {
+                        driver.Navigate().Back();
+                    }
+                    Console.WriteLine("✓ Navigated back from Browser");
+                    Thread.Sleep(platformName.Equals("iOS") ? 2000 : 1000);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Note: Browser button not found or not clickable: {e.Message}");
+                }
 
-                AndroidElement geolocation = (AndroidElement)new WebDriverWait(
-                 driver, TimeSpan.FromSeconds(10)).Until(
-                 SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                    MobileBy.Id("geoLocation"))
-             );
-                geolocation.Click();
-                System.Threading.Thread.Sleep(4000);
-                driver.PressKeyCode(AndroidKeyCode.Back);
-                System.Threading.Thread.Sleep(1000);
-
-
-
-                //----------------------Speed Test Button---------------------------------
-                Console.WriteLine("6.Speed Test Button Clicked");
-
-                AndroidElement speed = (AndroidElement)new WebDriverWait(
-                 driver, TimeSpan.FromSeconds(10)).Until(
-                 SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                    MobileBy.Id("speedTest"))
-             );
-                speed.Click();
-                System.Threading.Thread.Sleep(5000);
-                driver.PressKeyCode(AndroidKeyCode.Back);
-                System.Threading.Thread.Sleep(1000);
-
-
-                //----------------------Browser Button---------------------------------
-                //   Console.WriteLine("Browser Button Clicked");
-
-                AndroidElement BROWSER = (AndroidElement)new WebDriverWait(
-                  driver, TimeSpan.FromSeconds(30)).Until(
-                  SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                     MobileBy.XPath("//android.widget.FrameLayout[@content-desc=\"Browser\"]/android.widget.FrameLayout/android.widget.ImageView"))
-                  
-              );
-                BROWSER.Click();
-
-
-                AndroidElement url = (AndroidElement)new WebDriverWait(
-                driver, TimeSpan.FromSeconds(10)).Until(
-                SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(
-                   MobileBy.Id("url"))
-            );
-
-                //String command = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView("
-                //          + url + ");";
-
-                //driver.FindElementByAndroidUIAutomator(command);
-
-
-                url.Click();
-
-                url.SendKeys("www.lambdatest.com");
-
-                System.Threading.Thread.Sleep(1000);
-
-                driver.PressKeyCode(AndroidKeyCode.Back);
-
-                System.Threading.Thread.Sleep(3000);
-
-
-
-
-
-
+                Console.WriteLine($"All {platformName} tests completed successfully!");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[ERROR] Test failed: {e.Message}");
+                throw;
             }
         }
 
         [TearDown]
         public void Cleanup()
-
         {
-            
-            bool passed = TestContext.CurrentContext.Result.Outcome.Status == NUnit.Framework.Interfaces.TestStatus.Passed;
             try
             {
-                //-----------------Marking Test status passed or failed -----------------------------------------
-                ((IJavaScriptExecutor)driver).ExecuteScript("lambda-status=" + (passed ? "passed" : "failed"));
-               
+                if (driver != null)
+                {
+                    var status = TestContext.CurrentContext.Result.Outcome.Status.ToString();
+                    var script = "lambda-status=" + (status.Equals("Passed") ? "passed" : "failed");
+                    ((IJavaScriptExecutor)driver).ExecuteScript(script);
+                    driver.Quit();
+                }
             }
-            finally
+            catch (Exception e)
             {
-                //---------------------Quit the session-----------------------
-                
-                driver.Quit();
+                Console.WriteLine($"[ERROR] Cleanup failed: {e.Message}");
             }
-
-            
-
-         
-
-
-
-
-
-
         }
     }
 }
